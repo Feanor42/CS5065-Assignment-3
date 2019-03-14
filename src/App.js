@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import DatePicker from "react-datepicker";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis, Legend, Label, Tooltip } from 'recharts';
 import "react-datepicker/dist/react-datepicker.css";
 
 class App extends Component {
@@ -22,7 +22,7 @@ class App extends Component {
 
   getForecast(date){
     var yearString = date.getFullYear().toString();
-    var monthString = date.getMonth().toString();
+    var monthString = (date.getMonth() + 1).toString();
     if(monthString.length < 2){
       monthString = "0" + monthString;
     }
@@ -41,27 +41,37 @@ class App extends Component {
   }
 
   handleChange(newDate) {
-    this.setState({
-      date: newDate
-    });
-    this.getForecast(newDate);
+    if(newDate != null){
+      this.setState({
+        date: newDate
+      });
+      this.getForecast(newDate);
+    }
   }
 
   render() {
-    const data = [{date:20190202, tmax:33, tmin:20}, {date:20190203, tmax:49, tmin:30}, {date:20190204, tmax:45, tmin:19},{date:20190205, tmax:50, tmin:30}];
-
     const renderLineChart = (
-      <LineChart width={600} height={300} data={this.state.forecastData}>
-        <Line type="monotone" dataKey="TMAX" stroke="#8884d8" />
-        <Line type="monotone" dataKey="TMIN" stroke="#8884d8" />
+      <LineChart width={600} height={300} data={this.state.forecastData}
+      margin={{ top: 15, right: 30, left: 20, bottom: 20 }}>
+        <Line type="monotone" dataKey="TMAX" stroke="#e81414" />
+        <Line type="monotone" dataKey="TMIN" stroke="#1353e8" />
         <CartesianGrid stroke="#ccc" />
-        <XAxis dataKey="DATE" />
-        <YAxis />
+        <XAxis dataKey="DATE">
+          <Label value="Date" offset={-10} position="insideBottom" />
+        </XAxis>
+        <Legend verticalAlign="top" height={36}/>
+        <YAxis>
+          <Label value="Temperature (F)" offset={10} position="insideBottomLeft" angle={-90} />
+        </YAxis> 
+        <Tooltip />
       </LineChart>
       );
+
     return (
-      <div>
+      <div className="App">
         <DatePicker
+          className="DatePicker"
+          dateFormat="yyyyMMdd"
           selected={this.state.date}
           onChange={this.handleChange}
         />
